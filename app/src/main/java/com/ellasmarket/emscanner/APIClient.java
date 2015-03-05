@@ -3,11 +3,16 @@ package com.ellasmarket.emscanner;
 import com.ellasmarket.emscanner.model.Spo;
 import com.ellasmarket.emscanner.model.SpoProduct;
 import com.google.gson.JsonElement;
+import com.squareup.okhttp.OkHttpClient;
+
+import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.client.OkClient;
 import retrofit.http.GET;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 /**
  * Created by Scott on 3/2/15.
@@ -28,13 +33,25 @@ public class APIClient {
 
         @GET("/spos/{id}")
         void getSpoById(@Path("id") int id, Callback<Spo> cb);
+
+        @GET("/spos")
+        void getSpoBySuId(@Query("supplier_id") int supplier_id, Callback<ArrayList<Spo>> cb);
+        @GET("/spos")
+        void getSpoByShipmentCode(@Query("shipment_code") String shipment_code, Callback<ArrayList<Spo>> cb);
+        @GET("/spos")
+        void getSpoBySuIdAndShipmentCode(@Query("supplier_id") int supplier_id, @Query("shipment_code") String shipment_code, Callback<ArrayList<Spo>> cb);
     }
+
+
 
     private RestAdapter restAdapter;
     private WMS_API api;
 
     public APIClient() {
-        restAdapter = new RestAdapter.Builder().setEndpoint(API_URL).build();
+        restAdapter = new RestAdapter.Builder()
+                .setEndpoint(API_URL)
+                .setClient(new OkClient(new OkHttpClient()))
+                .build();
         api = restAdapter.create(WMS_API.class);
     }
 

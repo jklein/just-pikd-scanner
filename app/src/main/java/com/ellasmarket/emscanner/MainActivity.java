@@ -13,9 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ellasmarket.emscanner.model.Spo;
-import com.ellasmarket.emscanner.model.SpoProduct;
 import com.google.gson.JsonElement;
 import com.honeywell.scanintent.ScanIntent;
+
+import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -90,13 +91,13 @@ public class MainActivity extends Activity {
                 }
             };
             client.getProductById(1, 1, cb);*/
-
+/*
             Callback cb = new Callback<Spo>() {
                 @Override
                 public void success(Spo s, Response response) {
-                    String str = s.spo_status + " - " + s.spo_su_id + "\n";
+                    String str = s.spo_status + " - " + s.spo_date_ordered + "\n";
                     for (SpoProduct p : s.products) {
-                        str += p.spop_status + " - " + p.spop_pr_sku + "\n";
+                        str += p.spop_status + " - " + p.spop_pr_sku + " - " + p.spop_expected_arrival + "\n";
                     }
                     //barcodeData.setText(strObj);
                     Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
@@ -109,7 +110,28 @@ public class MainActivity extends Activity {
                 }
             };
             client.getSpoById(1, cb);
+*/
 
+            Callback cb = new Callback<ArrayList<Spo>>() {
+                @Override
+                public void success(ArrayList<Spo> l, Response response) {
+                    String str = "";
+
+                    for (Spo s : l) {
+                        str += s.spo_id + " - " + s.spo_status + " - " + s.spo_date_ordered + "\n";
+
+                        //barcodeData.setText(strObj);
+                        Toast.makeText(getApplicationContext(), str, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError retrofitError) {
+                    Toast.makeText(getApplicationContext(), "Error: " + retrofitError.toString(), Toast.LENGTH_LONG).show();
+                    //barcodeData.setText(retrofitError.toString());
+                }
+            };
+            client.getSpoBySuIdAndShipmentCode(1, "803207203", cb);
             barcodeData.setText(ScanIntent.EXTRA_RESULT_BARCODE_DATA+ ": " + data + "\r\n" + ScanIntent.EXTRA_RESULT_BARCODE_FORMAT + ": " + format);
 
         }
