@@ -1,19 +1,22 @@
-package com.ellasmarket.emscanner;
+package com.ellasmarket.emscanner.activity;
 
 /*
  * Copyright G2G Market Inc, 2015
  */
 
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ellasmarket.emscanner.R;
+import com.ellasmarket.emscanner.bluetooth.BluetoothChatFragment;
 import com.ellasmarket.emscanner.model.Spo;
-import com.google.gson.JsonElement;
 import com.honeywell.scanintent.ScanIntent;
 
 import java.util.ArrayList;
@@ -21,32 +24,34 @@ import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.http.GET;
-import retrofit.http.Path;
-
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
     TextView barcodeData = null;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //lock screen orientation to portrait so that screen doesn't rotate during operations
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
         barcodeData = (TextView) findViewById(R.id.data);
-    }
+        if (savedInstanceState == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            BluetoothChatFragment fragment = new BluetoothChatFragment();
+            transaction.replace(R.id.sample_content_fragment, fragment);
+            transaction.commit();
+        }
 
-    /*static class Spo {
-        int spo_id;
-        String spo_status;
-    }*/
-
-    interface SpoTest {
-        @GET("/spos/{id}")
-        void getById(@Path("id") int id, Callback<JsonElement> cb);
+        //Toast.makeText(getApplicationContext(),s,
+        //        Toast.LENGTH_SHORT).show();
     }
 
     public void onSendButtonClick(View v) {
+        startScan();
+    }
 
+    //this, as well as the onKeyDown thing, should likely be factored out into another class
+    public void startScan() {
         Intent intentScan = new Intent(ScanIntent.SCAN_ACTION);
         intentScan.addCategory(Intent.CATEGORY_DEFAULT);
 
@@ -63,8 +68,20 @@ public class MainActivity extends Activity {
 		SCAN_MODE_SHARE_BY_MMS = 3;
 		SCAN_MODE_SHARE_BY_EMAIL = 4;
 		SCAN_MODE_RESULT_AS_URI = 5;*/
-
         this.startActivityForResult(intentScan, 5);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //KEYCODE_UNKNOWN is the value that the hardware scan button on honeywell
+        //devices ends up sending.
+        if (keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+            startScan();
+            //true to indicate we handled the key event
+            return true;
+        }
+        //otherwise call super class's method to handle other buttons
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -74,7 +91,6 @@ public class MainActivity extends Activity {
                     .getStringExtra(ScanIntent.EXTRA_RESULT_BARCODE_DATA);
             int format = intent.getIntExtra(
                     ScanIntent.EXTRA_RESULT_BARCODE_FORMAT, 0);
-            APIClient.WMS_API client = new APIClient().getApi();
 
             /*Callback cb = new Callback<SpoProduct>() {
                 @Override
@@ -131,8 +147,8 @@ public class MainActivity extends Activity {
                     //barcodeData.setText(retrofitError.toString());
                 }
             };
-            client.getSpoBySuIdAndShipmentCode(1, "803207203", cb);
-            barcodeData.setText(ScanIntent.EXTRA_RESULT_BARCODE_DATA+ ": " + data + "\r\n" + ScanIntent.EXTRA_RESULT_BARCODE_FORMAT + ": " + format);
+            getClient().getSpoBySuIdAndShipmentCode(1, "803207203", cb);
+            barcodeData.setText(ScanIntent.EXTRA_RESULT_BARCODE_DATA + ": " + data + "\r\n" + ScanIntent.EXTRA_RESULT_BARCODE_FORMAT + ": " + format);
 
         }
         else
