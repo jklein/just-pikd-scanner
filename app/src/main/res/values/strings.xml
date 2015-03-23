@@ -4,6 +4,8 @@
     <string name="app_name">EMScanner</string>
     <string name="action_settings">Settings</string>
     <string name="hello_jim">Hello Jim!</string>
+    <string name="scan_or_enter">Scan or Enter Data</string>
+    <string name="submit">Submit</string>
     <string name="test_scan">Test Scan</string>
     <string name="send_scan_intent">Send Scan Intent</string>
     <string name="scan_failed">Scan Failed! Please try again!</string>

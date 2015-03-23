@@ -2,7 +2,7 @@ package com.ellasmarket.emscanner.application;
 
 import android.app.Application;
 
-import com.ellasmarket.emscanner.bluetooth.BluetoothChatService;
+import com.ellasmarket.emscanner.bluetooth.BluetoothService;
 
 /**
  * Created by Scott on 3/16/15.
@@ -13,13 +13,14 @@ import com.ellasmarket.emscanner.bluetooth.BluetoothChatService;
 public class GlobalState extends Application {
     private static String username;
     private static String pin;
-    private static BluetoothChatService mChatService = null;
+    private static BluetoothService mBluetoothService;
 
     @Override
     public void onCreate() {
         super.onCreate();
         username="";
         pin="";
+        mBluetoothService = new BluetoothService();
     }
 
     public static String getUsername() {
@@ -38,9 +39,8 @@ public class GlobalState extends Application {
         GlobalState.pin = pin;
     }
 
-    //public static BluetoothChatService getBluetoothChatService() {
+    public static BluetoothService getBluetoothService() {
         //initialize it here if it is null
-        //return mChatService;
-    //}
-
+        return mBluetoothService;
+    }
 }

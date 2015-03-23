@@ -5,28 +5,10 @@
     android:layout_height="match_parent"
     android:id="@+id/sample_main_layout">
 
-    <TextView android:text="@string/hello_jim" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/data"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/test_scan"
-        android:id="@+id/sendintent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onSendButtonClick"
-        android:layout_weight="0"
-        android:layout_gravity="center"/>
-    <FrameLayout
-        android:id="@+id/sample_content_fragment"
-        android:layout_weight="2"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_scan"
+        android:name="com.ellasmarket.emscanner.fragment.ScanFragment"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_alignTop="@+id/sendintent" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

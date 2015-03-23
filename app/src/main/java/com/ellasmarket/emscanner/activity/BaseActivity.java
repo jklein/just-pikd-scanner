@@ -2,8 +2,10 @@ package com.ellasmarket.emscanner.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 
 import com.ellasmarket.emscanner.application.GlobalState;
+import com.ellasmarket.emscanner.fragment.ScanFragment;
 import com.ellasmarket.emscanner.rest.APIClient;
 import com.ellasmarket.emscanner.rest.WMS_API;
 
@@ -19,6 +21,10 @@ public class BaseActivity extends FragmentActivity {
 
     private WMS_API client;
     public GlobalState gs;
+
+    //Many activities contain scan fragments which need to listen for a scan key event, so putting this here
+    //and allowing child activities to set the fragment in onCreate helps DRY the onKeyDown method
+    public ScanFragment scanFragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,5 +47,18 @@ public class BaseActivity extends FragmentActivity {
     public void showError(String message) {
         Crouton.makeText(this, message, Style.ALERT)
                 .show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //KEYCODE_UNKNOWN is the value that the hardware scan button on honeywell
+        //devices ends up sending.
+        if (keyCode == KeyEvent.KEYCODE_UNKNOWN && scanFragment != null) {
+            scanFragment.startScan();
+            //true to indicate we handled the key event
+            return true;
+        }
+        //otherwise call super class's method to handle other buttons
+        return super.onKeyDown(keyCode, event);
     }
 }
