@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -15,27 +14,32 @@ import com.honeywell.scanintent.ScanIntent;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by Scott on 3/23/15.
+ *
+ * Generic handler for scan events to be included by any activity
  */
 public class ScanFragment extends Fragment {
-    private static final String LOG_TAG = ScanFragment.class.getSimpleName();
+    //private static final String LOG_TAG = ScanFragment.class.getSimpleName();
 
     @InjectView(R.id.input) EditText input;
-    @InjectView(R.id.send_intent) Button send_intent;
     @InjectView(R.id.result) TextView result;
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         ButterKnife.inject(this, view);
-        send_intent.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                setResult();
-            }
-        });
-        // TODO Use "injected" views...
         return view;
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    @OnClick(R.id.submit) void submit() {
+        setResult();
     }
 
     public void setResult() {
