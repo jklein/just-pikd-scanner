@@ -1,5 +1,6 @@
 package com.ellasmarket.emscanner.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
@@ -8,6 +9,7 @@ import com.ellasmarket.emscanner.application.GlobalState;
 import com.ellasmarket.emscanner.fragment.ScanFragment;
 import com.ellasmarket.emscanner.rest.APIClient;
 import com.ellasmarket.emscanner.rest.WMS_API;
+import com.honeywell.scanintent.ScanIntent;
 
 import butterknife.ButterKnife;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -36,7 +38,7 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Crouton.clearCroutonsForActivity(this);
+        Crouton.cancelAllCroutons();
         ButterKnife.reset(this);
     }
 
@@ -46,6 +48,11 @@ public class BaseActivity extends FragmentActivity {
 
     public void showError(String message) {
         Crouton.makeText(this, message, Style.ALERT)
+                .show();
+    }
+
+    public void showSuccess(String message) {
+        Crouton.makeText(this, message, Style.CONFIRM)
                 .show();
     }
 
@@ -60,5 +67,15 @@ public class BaseActivity extends FragmentActivity {
         }
         //otherwise call super class's method to handle other buttons
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == ScanIntent.SCAN_RESULT_SUCCESSED) {
+            showSuccess("Scan Succeeded");
+        }
+        else
+            showError("Scan Failed, Try Again");
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 }

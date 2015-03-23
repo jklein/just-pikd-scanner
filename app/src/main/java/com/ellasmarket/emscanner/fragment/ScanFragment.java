@@ -9,19 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ellasmarket.emscanner.R;
-import com.ellasmarket.emscanner.model.Spo;
 import com.honeywell.scanintent.ScanIntent;
-
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by Scott on 3/23/15.
@@ -49,24 +42,11 @@ public class ScanFragment extends Fragment {
         result.setText(input.getText());
     }
 
-    //this, as well as the onKeyDown thing, should likely be factored out into another class
     public void startScan() {
         Intent intentScan = new Intent(ScanIntent.SCAN_ACTION);
         intentScan.addCategory(Intent.CATEGORY_DEFAULT);
-
         intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intentScan.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-
-        //int loadmode = 0;
-
         intentScan.putExtra("scan_mode", ScanIntent.SCAN_MODE_RESULT_AS_URI);
-
-/*		SCAN_MODE_SHOW_NO_RESULT = 0;
-		SCAN_MODE_SHOW_RESULT_UI = 1;
-		SCAN_MODE_SHARE_BY_SMS = 2;
-		SCAN_MODE_SHARE_BY_MMS = 3;
-		SCAN_MODE_SHARE_BY_EMAIL = 4;
-		SCAN_MODE_RESULT_AS_URI = 5;*/
         this.startActivityForResult(intentScan, 5);
     }
 
@@ -79,10 +59,18 @@ public class ScanFragment extends Fragment {
         if (resultCode == ScanIntent.SCAN_RESULT_SUCCESSED) {
             String data = intent
                     .getStringExtra(ScanIntent.EXTRA_RESULT_BARCODE_DATA);
-            int format = intent.getIntExtra(
-                    ScanIntent.EXTRA_RESULT_BARCODE_FORMAT, 0);
 
-            /*Callback cb = new Callback<SpoProduct>() {
+            result.setText(ScanIntent.EXTRA_RESULT_BARCODE_DATA + ": " + data);
+
+        }
+        else
+            result.setText(R.string.scan_failed);
+    }
+}
+
+
+//junky callback stuff to copy paste later
+/*Callback cb = new Callback<SpoProduct>() {
                 @Override
                 public void success(SpoProduct p, Response response) {
                     String str = p.spop_status + " - " + p.spop_pr_sku;
@@ -117,7 +105,7 @@ public class ScanFragment extends Fragment {
             };
             client.getSpoById(1, cb);
 */
-
+/*
             Callback cb = new Callback<ArrayList<Spo>>() {
                 @Override
                 public void success(ArrayList<Spo> l, Response response) {
@@ -138,10 +126,4 @@ public class ScanFragment extends Fragment {
                 }
             };
             //getActivity().getClient().getSpoBySuIdAndShipmentCode(1, "803207203", cb);
-            result.setText(ScanIntent.EXTRA_RESULT_BARCODE_DATA + ": " + data + "\r\n" + ScanIntent.EXTRA_RESULT_BARCODE_FORMAT + ": " + format);
-
-        }
-        else
-            result.setText(R.string.scan_failed);
-    }
-}
+            */
