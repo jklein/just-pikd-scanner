@@ -181,7 +181,7 @@ public class BluetoothChatFragment extends Fragment {
         mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the BluetoothService to perform bluetooth connections
-        mBluetoothService = GlobalState.getBluetoothService();
+        mBluetoothService = ((GlobalState) getActivity().getApplication()).getBluetoothService();
         mBluetoothService.setHandler(mHandler);
 
         // Initialize the buffer for outgoing messages

@@ -26,6 +26,7 @@
         android:id="@+id/input"
         android:layout_weight="6"
         android:layout_gravity="center_vertical"
+        android:maxLines="1" android:singleLine="true"
         android:hint="@string/scan_or_enter"/>
 
     <Button

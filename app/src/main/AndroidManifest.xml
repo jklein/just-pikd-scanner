@@ -11,21 +11,25 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:name=".application.GlobalState"
-        android:theme="@android:style/Theme.Holo" >
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.ReceivingActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name" >
+            android:label="@string/receiving" />
+        <activity
+            android:name=".activity.TaskSelectionActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/task_selection" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
     </application>
 </manifest>

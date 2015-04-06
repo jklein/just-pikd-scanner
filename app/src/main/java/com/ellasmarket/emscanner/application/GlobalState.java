@@ -11,35 +11,41 @@ import com.ellasmarket.emscanner.bluetooth.BluetoothService;
  * For security reasons, the session is lost when the app is stopped so the user would need to log in again.
  */
 public class GlobalState extends Application {
-    private static String username;
-    private static String pin;
-    private static BluetoothService mBluetoothService;
+    private int userId;
+    private String username;
+    private String token;
+    private BluetoothService mBluetoothService;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        username="";
-        pin="";
+        userId = 0;
+        username = "";
+        token = "";
         mBluetoothService = new BluetoothService();
     }
 
-    public static String getUsername() {
+    public int getUserId() { return userId; }
+
+    public void setUserId(int userId) { this.userId = userId; }
+
+    public String getUsername() {
         return username;
     }
 
-    public static void setUsername(String username) {
-        GlobalState.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public static String getPIN() {
-        return pin;
+    public String getToken() {
+        return token;
     }
 
-    public static void setPIN(String pin) {
-        GlobalState.pin = pin;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public static BluetoothService getBluetoothService() {
+    public BluetoothService getBluetoothService() {
         //initialize it here if it is null
         return mBluetoothService;
     }

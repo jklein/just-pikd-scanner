@@ -1,13 +1,12 @@
 package com.ellasmarket.emscanner.rest;
 
-import com.google.gson.JsonElement;
 import com.squareup.okhttp.OkHttpClient;
 
-import retrofit.Callback;
+import java.util.concurrent.TimeUnit;
+
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
-import retrofit.http.GET;
-import retrofit.http.Path;
 
 /**
  * Created by Scott on 3/2/15.
@@ -15,26 +14,47 @@ import retrofit.http.Path;
 
 
 public class APIClient {
-    private static final String API_URL = "http://192.168.3.14:3000";
-
-    interface SpoTest {
-        @GET("/spos/{id}")
-        void getById(@Path("id") int id, Callback<JsonElement> cb);
-    }
-
-    private RestAdapter restAdapter;
+    private static final String API_URL = "http://192.168.3.90:3000";
+    public static final String AUTH_HEADER = "X-Auth-Token";
+    private String authToken = null;
+    private RestAdapter restAdapter = null;
     private WMS_API api;
 
     public APIClient() {
+        buildApi();
+    }
+
+    public APIClient(String token) {
+        authToken = token;
+        buildApi();
+    }
+
+    public void buildApi() {
+        OkHttpClient client = new OkHttpClient();
+        client.setConnectTimeout(5, TimeUnit.SECONDS); // connect timeout
+        client.setReadTimeout(10, TimeUnit.SECONDS);    // socket timeout
+
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(API_URL)
-                .setClient(new OkClient(new OkHttpClient()))
+                .setClient(new OkClient(client))
+                .setRequestInterceptor(getRequestInterceptor())
                 .build();
         api = restAdapter.create(WMS_API.class);
     }
 
     public WMS_API getApi() {
         return api;
+    }
+
+    public RequestInterceptor getRequestInterceptor() {
+        return new RequestInterceptor() {
+            @Override
+            public void intercept(RequestInterceptor.RequestFacade r) {
+                if (authToken != null) {
+                    r.addHeader(AUTH_HEADER, authToken);
+                }
+            }
+        };
     }
 
     /*public void GetSpoProduct(int id, int product_id, Callback<SpoProduct> cb) {

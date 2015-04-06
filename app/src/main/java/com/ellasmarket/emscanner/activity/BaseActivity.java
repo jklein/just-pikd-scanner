@@ -1,8 +1,9 @@
 package com.ellasmarket.emscanner.activity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
 
 import com.ellasmarket.emscanner.application.GlobalState;
@@ -19,7 +20,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * Created by Scott on 3/16/15.
  */
-public class BaseActivity extends FragmentActivity {
+public class BaseActivity extends ActionBarActivity {
 
     private WMS_API client;
     public GlobalState gs;
@@ -33,6 +34,8 @@ public class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         client = new APIClient().getApi();
         gs = (GlobalState) getApplication();
+        //lock screen orientation to portrait so that screen doesn't rotate during operations
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override
@@ -54,6 +57,11 @@ public class BaseActivity extends FragmentActivity {
     public void showSuccess(String message) {
         Crouton.makeText(this, message, Style.CONFIRM)
                 .show();
+    }
+
+    public void updateToken(String token) {
+        gs.setToken(token);
+        client = new APIClient().getApi();
     }
 
     @Override
