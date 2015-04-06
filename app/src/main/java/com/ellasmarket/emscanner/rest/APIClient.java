@@ -1,5 +1,7 @@
 package com.ellasmarket.emscanner.rest;
 
+import android.util.Log;
+
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
@@ -16,20 +18,10 @@ import retrofit.client.OkClient;
 public class APIClient {
     private static final String API_URL = "http://192.168.3.90:3000";
     public static final String AUTH_HEADER = "X-Auth-Token";
-    private String authToken = null;
     private RestAdapter restAdapter = null;
     private WMS_API api;
 
-    public APIClient() {
-        buildApi();
-    }
-
     public APIClient(String token) {
-        authToken = token;
-        buildApi();
-    }
-
-    public void buildApi() {
         OkHttpClient client = new OkHttpClient();
         client.setConnectTimeout(5, TimeUnit.SECONDS); // connect timeout
         client.setReadTimeout(10, TimeUnit.SECONDS);    // socket timeout
@@ -37,8 +29,12 @@ public class APIClient {
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(API_URL)
                 .setClient(new OkClient(client))
-                .setRequestInterceptor(getRequestInterceptor())
+                .setRequestInterceptor(getRequestInterceptor(token))
                 .build();
+
+        if (token != null) {
+            Log.d("APICLIENT", "should have just build a request interceptor with token " + token);
+        }
         api = restAdapter.create(WMS_API.class);
     }
 
@@ -46,12 +42,16 @@ public class APIClient {
         return api;
     }
 
-    public RequestInterceptor getRequestInterceptor() {
+    public RequestInterceptor getRequestInterceptor(final String token) {
         return new RequestInterceptor() {
             @Override
             public void intercept(RequestInterceptor.RequestFacade r) {
-                if (authToken != null) {
-                    r.addHeader(AUTH_HEADER, authToken);
+                Log.d("APICLIENT", "got here - getRequestInterceptor");
+                if (token != null) {
+                    Log.d("APICLIENT", "Also got in here, setting " + AUTH_HEADER + " to " + token);
+                    r.addHeader(AUTH_HEADER, token);
+                } else {
+                    Log.d("APICLIENT", "Apparently token is null");
                 }
             }
         };

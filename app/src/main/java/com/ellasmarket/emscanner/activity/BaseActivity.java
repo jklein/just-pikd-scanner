@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.ellasmarket.emscanner.application.GlobalState;
@@ -32,8 +33,9 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        client = new APIClient().getApi();
+
         gs = (GlobalState) getApplication();
+        client = new APIClient(gs.getToken()).getApi();
         //lock screen orientation to portrait so that screen doesn't rotate during operations
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -61,7 +63,8 @@ public class BaseActivity extends ActionBarActivity {
 
     public void updateToken(String token) {
         gs.setToken(token);
-        client = new APIClient().getApi();
+        client = new APIClient(token).getApi();
+        Log.d("BaseActivity", "got here - update token");
     }
 
     @Override
